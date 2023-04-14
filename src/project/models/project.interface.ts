@@ -8,5 +8,5 @@ export interface Projects {
   status?: string;
   users?: Users[];
   tasks?: Tasks[];
-  //manager?: UserEntity;
+  manager?: Users;
 }

@@ -6,6 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
+import { UserEntity } from './user/models/user.enity';
+import { ProjectEntity } from './project/models/project.entity';
+import { TaskEntity } from './task/models/task.entity';
 
 @Module({
   imports: [
@@ -17,7 +20,7 @@ import { TaskModule } from './task/task.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      autoLoadEntities: true,
+      entities: [UserEntity, ProjectEntity, TaskEntity],
       synchronize: true,
     }),
     UserModule,

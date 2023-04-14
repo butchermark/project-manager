@@ -1,6 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Tasks } from 'src/task/models/task.interface';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ProjectEntity } from 'src/project/models/project.entity';
+import { TaskEntity } from 'src/task/models/task.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class UserEntity {
@@ -10,16 +19,22 @@ export class UserEntity {
   })
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
-  @Column({ default: 'asd', name: 'name' })
+  @Column('varchar', { default: 'asd', name: 'name' })
   name: string;
-  @Column({ default: 'asd', name: 'email' })
+  @Column('varchar', { default: 'asd', name: 'email' })
   email: string;
-  @Column({ default: 'asd', name: 'password' })
+  @Column('varchar', { default: 'asd', name: 'password' })
   password: string;
-  @Column({ default: true, name: 'isAdmin' })
+  @Column('boolean', { default: false, name: 'isAdmin' })
   isAdmin: boolean;
-  //@Column({ default: [], name: 'tasks' })
-  //tasks: Tasks[];
-  @Column({ default: 'asd', name: 'jwtToken' })
+  @Column('varchar', { default: 'asd', name: 'jwtToken' })
   jwtToken: string;
+
+  @OneToOne(() => ProjectEntity, { nullable: true })
+  @OneToMany(() => TaskEntity, (task) => task.user)
+  tasks: TaskEntity[];
+
+  @ManyToMany(() => ProjectEntity, (project) => project.users)
+  @JoinTable()
+  projects: ProjectEntity[];
 }

@@ -1,7 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Tasks } from 'src/task/models/task.interface';
-import { Users } from 'src/user/models/user.interface';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { TaskEntity } from 'src/task/models/task.entity';
+import { UserEntity } from 'src/user/models/user.enity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('projects')
 export class ProjectEntity {
@@ -11,14 +19,18 @@ export class ProjectEntity {
   })
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
-  @Column({ default: 'qwe', name: 'name' })
+  @Column('varchar', { default: 'qwe', name: 'name' })
   name: string;
-  @Column({ default: 'qwe', name: 'status' })
+  @Column('varchar', { default: 'qwe', name: 'status' })
   status: string;
-  //@Column({ default: [], name: 'users' })
-  //users: Users[];
-  //@Column({ default: [], name: 'tasks' })
-  //tasks: Tasks[];
-  @Column({ default: 'qwe', name: 'manager' })
-  manager: string;
+
+  @OneToOne(() => UserEntity, { nullable: true })
+  @JoinTable()
+  user: UserEntity;
+
+  @OneToMany(() => TaskEntity, (task) => task.project)
+  tasks: TaskEntity[];
+
+  @ManyToMany(() => UserEntity, (user) => user.projects)
+  users: UserEntity[];
 }

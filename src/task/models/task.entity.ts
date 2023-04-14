@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ProjectEntity } from 'src/project/models/project.entity';
 import { Projects } from 'src/project/models/project.interface';
-import { Users } from 'src/user/models/user.interface';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from 'src/user/models/user.enity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('tasks')
 export class TaskEntity {
@@ -11,14 +12,16 @@ export class TaskEntity {
   })
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
-  @Column({ default: 'yxc', name: 'name' })
+  @Column('varchar', { default: 'yxc', name: 'name' })
   name: string;
-  @Column({ default: 'yxc', name: 'description' })
+  @Column('varchar', { default: 'yxc', name: 'description' })
   description: string;
-  @Column({ default: 'yxc', name: 'status' })
+  @Column('varchar', { default: 'yxc', name: 'status' })
   status: string;
-  //@Column({ default: [], name: 'user' })
-  //user: Users;
-  //@Column({ default: [], name: 'project' })
-  //project: Projects;
+
+  @ManyToOne(() => ProjectEntity, (project) => project.tasks)
+  project: Projects;
+
+  @ManyToOne(() => UserEntity, (user) => user.tasks)
+  user: UserEntity;
 }
