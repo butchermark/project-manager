@@ -17,15 +17,16 @@ export class AuthService {
   async signinLocal(dto: AuthDto): Promise<any> {
     const user = await this.userRepository.findOne({
       where: {
-        name: dto.username,
+        id: dto.id,
+        name: dto.name,
         password: dto.password,
         isAdmin: dto.isAdmin,
       },
     });
     if (!user) throw new UnauthorizedException('User does not exists');
-    if (user.password !== dto.password)
-      throw new UnauthorizedException('Password does not match');
-    return this.signUser(user.name, user.password, user.isAdmin);
+    if (user.password !== dto.password && user.name !== dto.name)
+      throw new UnauthorizedException('Password or username does not match');
+    return this.signUser(user);
   }
 
   /*
@@ -38,11 +39,13 @@ export class AuthService {
     return this.userRepository.find();
   }
 
-  signUser(username: string, password: string, isAdmin: boolean) {
+  signUser({ id, name, password, isAdmin }: AuthDto) {
+    console.log(name, password);
     return {
       accesstoken: this.jwtService.sign({
-        sub: username,
-        password,
+        sub: name,
+        id: id,
+        password: password,
         isAdmin: isAdmin,
       }),
     };

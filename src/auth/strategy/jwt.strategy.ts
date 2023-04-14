@@ -14,10 +14,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload): Promise<AuthDto> {
+    console.log(payload);
     if (payload.isAdmin === true) {
       return payload;
     } else {
-      throw new UnauthorizedException(' Unauthorized');
+      throw new UnauthorizedException(' User has no permission');
     }
   }
 }

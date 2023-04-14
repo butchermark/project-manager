@@ -1,5 +1,6 @@
 export class AuthDto {
-  username: string;
+  id: string;
+  name: string;
   password: string;
   isAdmin: boolean;
 }
