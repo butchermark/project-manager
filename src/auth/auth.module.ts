@@ -5,6 +5,7 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.enity';
+import { AdminStrategy } from './strategy/admin.strategy';
 require('dotenv').config();
 
 @Module({
@@ -16,6 +17,6 @@ require('dotenv').config();
       signOptions: { expiresIn: '10m' },
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, AdminStrategy],
 })
 export class AuthModule {}

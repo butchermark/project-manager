@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthDto } from '../dto';
+import { AuthService } from '../auth.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor() {
+export class AdminStrategy extends PassportStrategy(Strategy, 'admin-jwt') {
+  constructor(private authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: true,
@@ -13,7 +14,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: AuthDto): Promise<AuthDto> {
-    return payload;
+  async validate(payload: AuthDto): Promise<boolean> {
+    const user = await this.authService.validateUser(payload);
+    return user.isAdmin;
   }
 }

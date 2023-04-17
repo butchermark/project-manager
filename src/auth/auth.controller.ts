@@ -10,26 +10,15 @@ import {
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
-import { UserEntity } from 'src/user/models/user.enity';
 import { Users } from 'src/user/models/user.interface';
-import { AdminAuthGuard, UserAuthGuard } from './guard/auth.guard';
+import { JwtAuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  /*
-  @Get('users')
-  @UseGuards(UserAuthGuard)
-  getUsers() {}
-
-  @Get('admins')
-  @UseGuards(AdminAuthGuard)
-  getAdmins() {}
-*/
-
   @Get('authenticate')
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(JwtAuthGuard)
   isAuthenticated(@Req() req: Request): Promise<any> {
     const user: any = req.user;
     return user;

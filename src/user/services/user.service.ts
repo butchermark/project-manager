@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { UserEntity } from '../models/user.enity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Observable, from } from 'rxjs';
 import { Users } from '../models/user.interface';
+import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
 
 @Injectable()
 export class UserService {

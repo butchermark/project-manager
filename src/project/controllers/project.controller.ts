@@ -6,12 +6,15 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ProjectService } from '../services/project.service';
 import { Observable } from 'rxjs';
 import { UpdateResult } from 'typeorm';
 import { Projects } from '../models/project.interface';
+import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
 
+@UseGuards(AdminAuthGuard)
 @Controller('project')
 export class ProjectController {
   constructor(private projectService: ProjectService) {}

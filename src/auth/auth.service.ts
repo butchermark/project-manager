@@ -39,8 +39,15 @@ export class AuthService {
     return this.userRepository.find();
   }
 
+  async validateUser(payload: AuthDto): Promise<AuthDto> {
+    if (payload.isAdmin === true) {
+      return payload;
+    } else {
+      throw new UnauthorizedException('User has no permission');
+    }
+  }
+
   signUser({ id, name, password, isAdmin }: AuthDto) {
-    console.log(name, password);
     return {
       accesstoken: this.jwtService.sign({
         sub: name,
