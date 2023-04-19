@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import { UpdateResult } from 'typeorm';
 import { Tasks } from '../models/task.interface';
 import { AdminAuthGuard, JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { TaskEntity } from '../models/task.entity';
 
 @Controller('task')
 export class TaskController {
@@ -20,7 +21,7 @@ export class TaskController {
 
   @UseGuards(AdminAuthGuard)
   @Post()
-  create(@Body() task: Tasks): Observable<Tasks> {
+  create(@Body() task: Tasks): Promise<TaskEntity> {
     return this.taskService.createTask(task);
   }
 

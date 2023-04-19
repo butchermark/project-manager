@@ -7,5 +7,4 @@ export interface Users {
   password?: string;
   isAdmin?: boolean;
   tasks?: Tasks[];
-  jwtToken?: string;
 }

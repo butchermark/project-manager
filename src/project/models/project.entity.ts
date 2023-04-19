@@ -4,8 +4,10 @@ import { UserEntity } from 'src/user/models/user.enity';
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -21,16 +23,18 @@ export class ProjectEntity {
   id: string;
   @Column('varchar', { default: 'qwe', name: 'name' })
   name: string;
+  @Column('varchar', { default: 'qwe', name: 'description' })
+  description: string;
   @Column('varchar', { default: 'qwe', name: 'status' })
   status: string;
 
-  @OneToOne(() => UserEntity, { nullable: true })
+  @ManyToOne(() => UserEntity, (user) => user.project)
   @JoinTable()
   user: UserEntity;
 
   @OneToMany(() => TaskEntity, (task) => task.project)
   tasks: TaskEntity[];
 
-  @ManyToMany(() => UserEntity, (user) => user.projects)
+  @ManyToMany(() => UserEntity, (users) => users.projects)
   users: UserEntity[];
 }

@@ -1,8 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProjectEntity } from 'src/project/models/project.entity';
-import { Projects } from 'src/project/models/project.interface';
 import { UserEntity } from 'src/user/models/user.enity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('tasks')
 export class TaskEntity {
@@ -20,8 +25,10 @@ export class TaskEntity {
   status: string;
 
   @ManyToOne(() => ProjectEntity, (project) => project.tasks)
-  project: Projects;
+  @JoinTable()
+  project: ProjectEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.tasks)
+  @JoinTable()
   user: UserEntity;
 }

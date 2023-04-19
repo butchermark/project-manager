@@ -4,6 +4,7 @@ import { TaskEntity } from 'src/task/models/task.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
@@ -27,14 +28,14 @@ export class UserEntity {
   password: string;
   @Column('boolean', { default: false, name: 'isAdmin' })
   isAdmin: boolean;
-  @Column('varchar', { default: 'asd', name: 'jwtToken' })
-  jwtToken: string;
 
-  @OneToOne(() => ProjectEntity, { nullable: true })
+  @OneToMany(() => ProjectEntity, (project) => project.user)
+  project: ProjectEntity;
+
   @OneToMany(() => TaskEntity, (task) => task.user)
   tasks: TaskEntity[];
 
-  @ManyToMany(() => ProjectEntity, (project) => project.users)
+  @ManyToMany(() => ProjectEntity, (projects) => projects.users)
   @JoinTable()
   projects: ProjectEntity[];
 }

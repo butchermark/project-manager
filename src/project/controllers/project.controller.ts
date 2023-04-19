@@ -13,14 +13,19 @@ import { Observable } from 'rxjs';
 import { UpdateResult } from 'typeorm';
 import { Projects } from '../models/project.interface';
 import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
+import { CreateProjectTaskDto } from '../dtos/createProjectTask.dto';
+import { ProjectEntity } from '../models/project.entity';
 
 @UseGuards(AdminAuthGuard)
 @Controller('project')
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
-  @Post()
-  create(@Body() project: Projects): Observable<Projects> {
-    return this.projectService.createProject(project);
+  @Post(':id')
+  create(
+    @Param('id') id: string,
+    @Body() project: ProjectEntity,
+  ): Promise<ProjectEntity> {
+    return this.projectService.createProject(id, project);
   }
 
   @Delete(':id')
@@ -44,5 +49,17 @@ export class ProjectController {
   @Get()
   findAllProjects(): Observable<Projects[]> {
     return this.projectService.findAllProjects();
+  }
+
+  @Post(':id/task')
+  async createProjectTask(
+    @Param('id') id: string,
+    @Body() createProjectTaskDto: CreateProjectTaskDto,
+  ): Promise<any> {
+    console.log(createProjectTaskDto);
+    return await this.projectService.createProjectTask(
+      id,
+      createProjectTaskDto,
+    );
   }
 }

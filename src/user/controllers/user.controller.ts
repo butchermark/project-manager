@@ -11,8 +11,9 @@ import {
 import { UserService } from '../services/user.service';
 import { Users } from '../models/user.interface';
 import { Observable } from 'rxjs';
-import { UpdateResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
+import { AddUserToTaskDto } from '../dtos/addUserToTask.dto';
 
 @Controller('user')
 export class UserController {
@@ -25,13 +26,13 @@ export class UserController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
+  delete(@Param('id') id: string): Observable<DeleteResult> {
     return this.userService.deleteUser(id);
   }
 
   @Delete('deleteAllUsers')
-  deleteAllUsers(@Body() user: Users) {
-    return this.userService.deleteAllUsers(user);
+  async deleteAllUsers(): Promise<void> {
+    await this.userService.deleteAllUsers();
   }
 
   @Put(':id')
@@ -45,5 +46,13 @@ export class UserController {
   @Get()
   findAllUsers(): Observable<Users[]> {
     return this.userService.findAllUsers();
+  }
+
+  @Post(':id/task')
+  async addUserToTask(
+    @Param('id') id: string,
+    @Body() addUserToTaskDto: AddUserToTaskDto,
+  ): Promise<any> {
+    return await this.userService.addUserToTask(id, addUserToTaskDto);
   }
 }
