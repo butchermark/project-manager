@@ -12,15 +12,16 @@ import { UserService } from '../services/user.service';
 import { Users } from '../models/user.interface';
 import { Observable } from 'rxjs';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
 import { AddUserToTaskDto } from '../dtos/addUserToTask.dto';
+import { RemoveUserFromTaskDto } from '../dtos/removeUserFromTask.dto';
+import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
 
+@UseGuards(AdminAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  @UseGuards(AdminAuthGuard)
   create(@Body() user: Users): Observable<Users> {
     return this.userService.createUser(user);
   }
@@ -54,5 +55,13 @@ export class UserController {
     @Body() addUserToTaskDto: AddUserToTaskDto,
   ): Promise<any> {
     return await this.userService.addUserToTask(id, addUserToTaskDto);
+  }
+
+  @Delete(':id/task')
+  async removeUserFromTask(
+    @Param('id') id: string,
+    @Body() removeUserFromTaskDto: RemoveUserFromTaskDto,
+  ): Promise<any> {
+    return await this.userService.removeUserFromTask(id, removeUserFromTaskDto);
   }
 }

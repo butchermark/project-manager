@@ -4,6 +4,8 @@ import { TaskEntity } from '../models/task.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Observable, from } from 'rxjs';
 import { Tasks } from '../models/task.interface';
+import { UpdateTaskForUserDto } from '../dtos/updateTaskForUser.dto';
+import { UserService } from 'src/user/services/user.service';
 
 @Injectable()
 export class TaskService {
@@ -22,6 +24,22 @@ export class TaskService {
 
   deleteAllTasks(project: Tasks): Observable<DeleteResult> {
     return from(this.tasksRepository.delete(project));
+  }
+
+  async updateTaskForUser(
+    id: string,
+    updateTaskForUserDto: UpdateTaskForUserDto,
+  ): Promise<any> {
+    const task = await this.findTaskById(id);
+    console.log(task);
+    //?????
+    if (updateTaskForUserDto.userId !== task.user.id) {
+      throw new HttpException(
+        new Error('User is not part of the task'),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.tasksRepository.update(id, updateTaskForUserDto);
   }
 
   updateTask(id: string, task: Tasks): Observable<UpdateResult> {

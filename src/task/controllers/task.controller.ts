@@ -14,6 +14,7 @@ import { UpdateResult } from 'typeorm';
 import { Tasks } from '../models/task.interface';
 import { AdminAuthGuard, JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { TaskEntity } from '../models/task.entity';
+import { UpdateTaskForUserDto } from '../dtos/updateTaskForUser.dto';
 
 @Controller('task')
 export class TaskController {
@@ -39,11 +40,11 @@ export class TaskController {
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
-    @Body() task: Tasks,
-  ): Observable<UpdateResult> {
-    return this.taskService.updateTask(id, task);
+    @Body() updateTaskForUserDto: UpdateTaskForUserDto,
+  ): Promise<any> {
+    return await this.taskService.updateTaskForUser(id, updateTaskForUserDto);
   }
 
   @UseGuards(AdminAuthGuard)
