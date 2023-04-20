@@ -6,12 +6,15 @@ import { Observable, from } from 'rxjs';
 import { Tasks } from '../models/task.interface';
 import { UpdateTaskForUserDto } from '../dtos/updateTaskForUser.dto';
 import { UserService } from 'src/user/services/user.service';
+import { UserEntity } from 'src/user/models/user.enity';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(TaskEntity)
     private readonly tasksRepository: Repository<TaskEntity>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
   createTask(task: Tasks): Promise<TaskEntity> {
@@ -31,15 +34,19 @@ export class TaskService {
     updateTaskForUserDto: UpdateTaskForUserDto,
   ): Promise<any> {
     const task = await this.findTaskById(id);
-    console.log(task);
-    //?????
-    if (updateTaskForUserDto.userId !== task.user.id) {
+    const user = await this.usersRepository.findOne({
+      where: { id: updateTaskForUserDto.userId },
+    });
+
+    const { userId, ...updateTaskProperties } = updateTaskForUserDto;
+
+    if (user.id !== task.user.id) {
       throw new HttpException(
         new Error('User is not part of the task'),
         HttpStatus.BAD_REQUEST,
       );
     }
-    return this.tasksRepository.update(id, updateTaskForUserDto);
+    return this.tasksRepository.update(id, updateTaskProperties);
   }
 
   updateTask(id: string, task: Tasks): Observable<UpdateResult> {
@@ -50,7 +57,10 @@ export class TaskService {
     return from(this.tasksRepository.find());
   }
   findTaskById(id: string): Promise<TaskEntity> {
-    const task = this.tasksRepository.findOneBy({ id });
+    const task = this.tasksRepository.findOne({
+      where: { id: id },
+      relations: ['user'],
+    });
     if (!task) {
       throw new HttpException(
         new Error('Task not found. Cannot find task'),

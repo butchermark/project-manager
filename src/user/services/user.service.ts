@@ -80,7 +80,6 @@ export class UserService {
     this.cannotFindUser(user);
     console.log(task);
     task.user = null;
-    console.log(task);
     return await this.taskService.updateTask(task.id, task);
   }
 }
