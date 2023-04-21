@@ -22,8 +22,8 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  create(@Body() user: Users): Observable<Users> {
-    return this.userService.createUser(user);
+  async create(@Body() user: Users): Promise<Users> {
+    return await this.userService.createUser(user);
   }
 
   @Delete(':id')

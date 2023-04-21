@@ -8,6 +8,7 @@ import { AddUserToTaskParams } from '../models/addUserToTask.interface';
 import { TaskService } from 'src/task/services/task.service';
 import { RemoveUserFromTaskParams } from '../models/removeUserFromTaskParams.interface';
 import { TaskEntity } from 'src/task/models/task.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -17,8 +18,11 @@ export class UserService {
     private readonly taskService: TaskService,
   ) {}
 
-  createUser(user: Users): Observable<Users> {
-    return from(this.usersRepository.save(user));
+  async createUser(user: Users): Promise<Users> {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(user.password, salt);
+    user.password = hashedPassword;
+    return await this.usersRepository.save(user);
   }
 
   deleteUser(id: string): Observable<DeleteResult> {
@@ -64,9 +68,7 @@ export class UserService {
     this.cannotFindTask(task);
     const user = await this.findUserById(addUserToTaskDetails.id);
     this.cannotFindUser(user);
-    console.log(task);
     task.user = user;
-    console.log(task);
     return await this.taskService.updateTask(task.id, task);
   }
 
@@ -78,7 +80,6 @@ export class UserService {
     this.cannotFindTask(task);
     const user = await this.findUserById(removeUserFromTaskDetails.id);
     this.cannotFindUser(user);
-    console.log(task);
     task.user = null;
     return await this.taskService.updateTask(task.id, task);
   }

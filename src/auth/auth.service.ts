@@ -5,6 +5,7 @@ import { UserEntity } from 'src/user/models/user.enity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from 'src/user/models/user.interface';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,10 @@ export class AuthService {
       },
     });
     if (!user) throw new UnauthorizedException('User does not exists');
-    if (user.password !== dto.password && user.name !== dto.name)
+    if (
+      (await bcrypt.compare(dto.password, user.password)) &&
+      user.name !== dto.name
+    )
       throw new UnauthorizedException('Password or username does not match');
     return this.signUser(user);
   }

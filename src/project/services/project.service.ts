@@ -1,9 +1,4 @@
-import {
-  ConsoleLogger,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectEntity } from '../models/project.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -13,7 +8,6 @@ import { CreateProjectTaskParams } from '../models/createProjectTaskParams.inter
 import { TaskService } from 'src/task/services/task.service';
 import { UserService } from 'src/user/services/user.service';
 import { UserEntity } from 'src/user/models/user.enity';
-import { CreateProjectParams } from '../models/createProjectParams.interface';
 
 @Injectable()
 export class ProjectService {
