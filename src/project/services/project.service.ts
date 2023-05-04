@@ -49,7 +49,7 @@ export class ProjectService {
   }
 
   findAllProjects(): Observable<Projects[]> {
-    return from(this.projectsRepository.find());
+    return from(this.projectsRepository.find({ relations: ['user', 'tasks'] }));
   }
 
   async findProjectById(id: string): Promise<ProjectEntity> {
@@ -74,5 +74,11 @@ export class ProjectService {
     });
 
     return await this.projectsRepository.save(project);
+  }
+
+  async archiveProject(id: string): Promise<any> {
+    const project = await this.findProjectById(id);
+    project.archived = true;
+    return await this.updateProject(project.id, project);
   }
 }

@@ -12,9 +12,9 @@ import { TaskService } from '../services/task.service';
 import { Observable } from 'rxjs';
 import { UpdateResult } from 'typeorm';
 import { Tasks } from '../models/task.interface';
-import { AdminAuthGuard, JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { TaskEntity } from '../models/task.entity';
 import { UpdateTaskForUserDto } from '../dtos/updateTaskForUser.dto';
+import { AdminAuthGuard, JwtAuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('task')
 export class TaskController {
@@ -51,5 +51,11 @@ export class TaskController {
   @Get()
   findAllTasks(): Observable<Tasks[]> {
     return this.taskService.findAllTasks();
+  }
+
+  @UseGuards(AdminAuthGuard)
+  @Put(':id/archiveTask')
+  async archiveTask(@Param('id') id: string): Promise<any> {
+    return await this.taskService.archiveTask(id);
   }
 }

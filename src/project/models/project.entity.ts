@@ -4,12 +4,10 @@ import { UserEntity } from 'src/user/models/user.enity';
 import {
   Column,
   Entity,
-  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -27,6 +25,8 @@ export class ProjectEntity {
   description: string;
   @Column('varchar', { default: 'qwe', name: 'status' })
   status: string;
+  @Column('boolean', { default: false, name: 'isArchived' })
+  archived: boolean;
 
   @ManyToOne(() => UserEntity, (user) => user.project)
   @JoinTable()

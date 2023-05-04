@@ -9,8 +9,8 @@ async function bootstrap() {
 
   // Add swagger
   const options = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('The API description')
+    .setTitle('Project Manager')
+    .setDescription('---')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

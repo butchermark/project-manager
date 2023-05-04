@@ -5,10 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Observable, from } from 'rxjs';
 import { Users } from '../models/user.interface';
 import { AddUserToTaskParams } from '../models/addUserToTask.interface';
-import { TaskService } from 'src/task/services/task.service';
 import { RemoveUserFromTaskParams } from '../models/removeUserFromTaskParams.interface';
 import { TaskEntity } from 'src/task/models/task.entity';
-import * as bcrypt from 'bcrypt';
+import { TaskService } from 'src/task/services/task.service';
+
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -19,8 +20,11 @@ export class UserService {
   ) {}
 
   async createUser(user: Users): Promise<Users> {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(user.password, salt);
+    const hashedPassword = await crypto
+      .createHmac('sha256', process.env.USER_SALT)
+      .update(user.password)
+      .digest('base64');
+
     user.password = hashedPassword;
     return await this.usersRepository.save(user);
   }
@@ -44,17 +48,13 @@ export class UserService {
     if (!user) {
       throw new HttpException(
         new Error('User not found. Cannot find user'),
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     }
   }
-  cannotFindTask(task: TaskEntity): void {
-    if (!task) {
-      throw new HttpException(
-        new Error('Task not found. Cannot find task'),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+
+  async getAllUserTasks(id: string): Promise<TaskEntity[]> {
+    return await this.taskService.findTaskByUserId(id);
   }
 
   async findUserById(id: string): Promise<UserEntity> {
@@ -65,7 +65,7 @@ export class UserService {
 
   async addUserToTask(id: string, addUserToTaskDetails: AddUserToTaskParams) {
     const task = await this.taskService.findTaskById(id);
-    this.cannotFindTask(task);
+    this.taskService.cannotFindTask(task);
     const user = await this.findUserById(addUserToTaskDetails.id);
     this.cannotFindUser(user);
     task.user = user;
@@ -77,7 +77,7 @@ export class UserService {
     removeUserFromTaskDetails: RemoveUserFromTaskParams,
   ) {
     const task = await this.taskService.findTaskById(id);
-    this.cannotFindTask(task);
+    this.taskService.cannotFindTask(task);
     const user = await this.findUserById(removeUserFromTaskDetails.id);
     this.cannotFindUser(user);
     task.user = null;

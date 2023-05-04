@@ -15,12 +15,14 @@ import { Projects } from '../models/project.interface';
 import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
 import { CreateProjectTaskDto } from '../dtos/createProjectTask.dto';
 import { ProjectEntity } from '../models/project.entity';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @UseGuards(AdminAuthGuard)
 @Controller('project')
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
   @Post(':id')
+  @ApiBearerAuth()
   create(
     @Param('id') id: string,
     @Body() project: ProjectEntity,
@@ -29,16 +31,19 @@ export class ProjectController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   delete(@Param('id') id: string) {
     return this.projectService.deleteProject(id);
   }
 
   @Delete('deleteAllProjects')
+  @ApiBearerAuth()
   deleteAllProjects(@Body() project: Projects) {
     return this.projectService.deleteAllProjects(project);
   }
 
   @Put(':id')
+  @ApiBearerAuth()
   update(
     @Param('id') id: string,
     @Body() project: Projects,
@@ -47,11 +52,13 @@ export class ProjectController {
   }
 
   @Get()
+  @ApiBearerAuth()
   findAllProjects(): Observable<Projects[]> {
     return this.projectService.findAllProjects();
   }
 
   @Post(':id/task')
+  @ApiBearerAuth()
   async createProjectTask(
     @Param('id') id: string,
     @Body() createProjectTaskDto: CreateProjectTaskDto,
@@ -61,5 +68,10 @@ export class ProjectController {
       id,
       createProjectTaskDto,
     );
+  }
+
+  @Put(':id/archiveProject')
+  async archiveProject(@Param('id') id: string): Promise<ProjectEntity> {
+    return await this.projectService.archiveProject(id);
   }
 }

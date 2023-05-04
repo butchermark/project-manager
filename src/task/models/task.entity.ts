@@ -23,6 +23,8 @@ export class TaskEntity {
   description: string;
   @Column('varchar', { default: 'yxc', name: 'status' })
   status: string;
+  @Column('boolean', { default: false, name: 'isArchived' })
+  archived: boolean;
 
   @ManyToOne(() => ProjectEntity, (project) => project.tasks)
   @JoinTable()

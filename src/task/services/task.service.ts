@@ -1,11 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskEntity } from '../models/task.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Observable, from } from 'rxjs';
 import { Tasks } from '../models/task.interface';
 import { UpdateTaskForUserDto } from '../dtos/updateTaskForUser.dto';
-import { UserService } from 'src/user/services/user.service';
 import { UserEntity } from 'src/user/models/user.enity';
 
 @Injectable()
@@ -49,12 +48,28 @@ export class TaskService {
     return this.tasksRepository.update(id, updateTaskProperties);
   }
 
-  updateTask(id: string, task: Tasks): Observable<UpdateResult> {
-    return from(this.tasksRepository.update(id, task));
+  updateTask(id: string, task: Tasks): Observable<TaskEntity> {
+    return from(this.tasksRepository.save(task));
   }
 
   findAllTasks(): Observable<Tasks[]> {
-    return from(this.tasksRepository.find());
+    return from(this.tasksRepository.find({ relations: ['user'] }));
+  }
+
+  async findTaskByUserId(userId: string): Promise<TaskEntity[]> {
+    return await this.tasksRepository.find({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+  }
+
+  cannotFindTask(task: TaskEntity): void {
+    if (!task) {
+      throw new HttpException(
+        new Error('Task not found. Cannot find task'),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
   findTaskById(id: string): Promise<TaskEntity> {
     const task = this.tasksRepository.findOne({
@@ -68,5 +83,11 @@ export class TaskService {
       );
     }
     return task;
+  }
+
+  async archiveTask(id: string): Promise<any> {
+    const task = await this.findTaskById(id);
+    task.archived = true;
+    return await this.updateTask(task.id, task);
   }
 }

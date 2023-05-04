@@ -26,6 +26,10 @@ export class UserEntity {
   password: string;
   @Column('boolean', { default: false, name: 'isAdmin' })
   isAdmin: boolean;
+  @Column('boolean', { default: false, name: 'isSuspended' })
+  isSuspended: boolean;
+  @Column('date', { default: '2000-01-01', name: 'lastLogin' })
+  lastLogin: Date;
 
   @OneToMany(() => ProjectEntity, (project) => project.user)
   project: ProjectEntity;
