@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskEntity } from '../models/task.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Observable, from } from 'rxjs';
 import { Tasks } from '../models/task.interface';
 import { UpdateTaskForUserDto } from '../dtos/updateTaskForUser.dto';
@@ -31,7 +31,7 @@ export class TaskService {
   async updateTaskForUser(
     id: string,
     updateTaskForUserDto: UpdateTaskForUserDto,
-  ): Promise<any> {
+  ): Promise<TaskEntity[]> {
     const task = await this.findTaskById(id);
     const user = await this.usersRepository.findOne({
       where: { id: updateTaskForUserDto.userId },
@@ -45,15 +45,25 @@ export class TaskService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return this.tasksRepository.update(id, updateTaskProperties);
+    await this.tasksRepository.update(id, updateTaskProperties);
+    return this.tasksRepository.find();
   }
 
   updateTask(id: string, task: Tasks): Observable<TaskEntity> {
     return from(this.tasksRepository.save(task));
   }
 
-  findAllTasks(): Observable<Tasks[]> {
-    return from(this.tasksRepository.find({ relations: ['user'] }));
+  async updateTaskForAdmin(id: string, updates: Tasks): Promise<TaskEntity[]> {
+    const task = await this.findTaskById(id);
+    await this.tasksRepository.update(task, updates);
+    return this.tasksRepository.find({
+      relations: ['user', 'project'],
+      order: { name: 'ASC' },
+    });
+  }
+
+  async findAllTasksForUser(): Promise<TaskEntity[]> {
+    return this.tasksRepository.find({ relations: ['user'] });
   }
 
   async findTaskByUserId(userId: string): Promise<TaskEntity[]> {
@@ -70,6 +80,13 @@ export class TaskService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async getAllTasks(): Promise<TaskEntity[]> {
+    return await this.tasksRepository.find({
+      relations: ['user', 'project'],
+      order: { name: 'ASC' },
+    });
   }
   findTaskById(id: string): Promise<TaskEntity> {
     const task = this.tasksRepository.findOne({

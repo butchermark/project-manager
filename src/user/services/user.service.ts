@@ -19,30 +19,33 @@ export class UserService {
     private readonly taskService: TaskService,
   ) {}
 
-  async createUser(user: Users): Promise<Users> {
+  async createUser(user: Users): Promise<UserEntity[]> {
     const hashedPassword = await crypto
       .createHmac('sha256', process.env.USER_SALT)
       .update(user.password)
       .digest('base64');
 
     user.password = hashedPassword;
-    return await this.usersRepository.save(user);
+    await this.usersRepository.save(user);
+    return await this.usersRepository.find();
   }
 
-  deleteUser(id: string): Observable<DeleteResult> {
-    return from(this.usersRepository.delete(id));
+  async deleteUser(id: string): Promise<UserEntity[]> {
+    await this.usersRepository.delete(id);
+    return await this.usersRepository.find();
   }
 
   async deleteAllUsers(): Promise<void> {
     await this.usersRepository.clear();
   }
 
-  updateUser(id: string, user: Users): Observable<UpdateResult> {
-    return from(this.usersRepository.update(id, user));
+  async updateUser(id: string, user: Users): Promise<UserEntity[]> {
+    await this.usersRepository.update(id, user);
+    return this.usersRepository.find({ order: { name: 'ASC' } });
   }
 
   findAllUsers(): Observable<Users[]> {
-    return from(this.usersRepository.find());
+    return from(this.usersRepository.find({ order: { name: 'ASC' } }));
   }
   cannotFindUser(user: UserEntity): void {
     if (!user) {

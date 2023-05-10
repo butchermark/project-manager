@@ -34,7 +34,7 @@ export class UserEntity {
   @OneToMany(() => ProjectEntity, (project) => project.user)
   project: ProjectEntity;
 
-  @OneToMany(() => TaskEntity, (task) => task.user)
+  @OneToMany(() => TaskEntity, (task) => task.user, { cascade: true })
   tasks: TaskEntity[];
 
   @ManyToMany(() => ProjectEntity, (projects) => projects.users)

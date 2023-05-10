@@ -30,7 +30,7 @@ export class TaskEntity {
   @JoinTable()
   project: ProjectEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.tasks)
+  @ManyToOne(() => UserEntity, (user) => user.tasks, { onDelete: 'CASCADE' })
   @JoinTable()
   user: UserEntity;
 }

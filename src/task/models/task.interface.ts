@@ -6,6 +6,7 @@ export interface Tasks {
   name?: string;
   description?: string;
   status?: string;
+  archived?: boolean;
   user?: Users;
   project?: Projects;
 }

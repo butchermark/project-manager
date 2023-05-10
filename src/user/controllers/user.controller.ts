@@ -18,6 +18,7 @@ import { RemoveUserFromTaskDto } from '../dtos/removeUserFromTask.dto';
 import { AdminAuthGuard, JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { TaskEntity } from 'src/task/models/task.entity';
+import { UserEntity } from '../models/user.enity';
 
 @Controller('user')
 export class UserController {
@@ -26,14 +27,14 @@ export class UserController {
   @UseGuards(AdminAuthGuard)
   @Post()
   @ApiBearerAuth()
-  async create(@Body() user: Users): Promise<Users> {
+  async create(@Body() user: Users): Promise<UserEntity[]> {
     return await this.userService.createUser(user);
   }
 
   @UseGuards(AdminAuthGuard)
   @Delete(':id')
-  delete(@Param('id') id: string): Observable<DeleteResult> {
-    return this.userService.deleteUser(id);
+  async delete(@Param('id') id: string): Promise<UserEntity[]> {
+    return await this.userService.deleteUser(id);
   }
 
   @UseGuards(AdminAuthGuard)
@@ -44,11 +45,11 @@ export class UserController {
 
   @UseGuards(AdminAuthGuard)
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() user: Users,
-  ): Observable<UpdateResult> {
-    return this.userService.updateUser(id, user);
+  ): Promise<UserEntity[]> {
+    return await this.userService.updateUser(id, user);
   }
 
   @UseGuards(AdminAuthGuard)

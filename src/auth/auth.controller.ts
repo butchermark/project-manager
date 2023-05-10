@@ -11,11 +11,7 @@ import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { Users } from 'src/user/models/user.interface';
-import {
-  AdminAuthGuard,
-  JwtAuthGuard,
-  UserAuthGuard,
-} from './guards/auth.guard';
+import { AdminAuthGuard, JwtAuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {

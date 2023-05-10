@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectEntity } from '../models/project.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -8,7 +13,9 @@ import { CreateProjectTaskParams } from '../models/createProjectTaskParams.inter
 import { TaskService } from 'src/task/services/task.service';
 import { UserService } from 'src/user/services/user.service';
 import { UserEntity } from 'src/user/models/user.enity';
+import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
 
+@UseGuards(AdminAuthGuard)
 @Injectable()
 export class ProjectService {
   constructor(
@@ -23,12 +30,6 @@ export class ProjectService {
     project: ProjectEntity,
   ): Promise<ProjectEntity> {
     const manager: UserEntity = await this.userService.findUserById(id);
-    if (manager.isAdmin === false) {
-      throw new HttpException(
-        new Error('Only admin can create project'),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
     project.user = manager;
     {
       project;

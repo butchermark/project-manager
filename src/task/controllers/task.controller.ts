@@ -33,6 +33,15 @@ export class TaskController {
   }
 
   @UseGuards(AdminAuthGuard)
+  @Put('admin/:id')
+  async updateTask(
+    @Param('id') id: string,
+    @Body() updates: Tasks,
+  ): Promise<TaskEntity[]> {
+    return await this.taskService.updateTaskForAdmin(id, updates);
+  }
+
+  @UseGuards(AdminAuthGuard)
   @Delete('deleteAllTasks')
   deleteAllTasks(@Body() task: Tasks) {
     return this.taskService.deleteAllTasks(task);
@@ -43,14 +52,20 @@ export class TaskController {
   async update(
     @Param('id') id: string,
     @Body() updateTaskForUserDto: UpdateTaskForUserDto,
-  ): Promise<any> {
+  ): Promise<TaskEntity[]> {
     return await this.taskService.updateTaskForUser(id, updateTaskForUserDto);
   }
 
   @UseGuards(AdminAuthGuard)
   @Get()
-  findAllTasks(): Observable<Tasks[]> {
-    return this.taskService.findAllTasks();
+  async findAllTasksForUser(): Promise<TaskEntity[]> {
+    return await this.taskService.findAllTasksForUser();
+  }
+
+  @UseGuards(AdminAuthGuard)
+  @Get('allTasks')
+  async getAllTasks(): Promise<TaskEntity[]> {
+    return await this.taskService.getAllTasks();
   }
 
   @UseGuards(AdminAuthGuard)
