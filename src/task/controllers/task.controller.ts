@@ -28,7 +28,7 @@ export class TaskController {
 
   @UseGuards(AdminAuthGuard)
   @Delete(':id')
-  delete(@Param('id') id: string) {
+  async delete(@Param('id') id: string): Promise<TaskEntity[]> {
     return this.taskService.deleteTask(id);
   }
 

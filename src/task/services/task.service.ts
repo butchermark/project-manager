@@ -20,8 +20,12 @@ export class TaskService {
     return this.tasksRepository.save(task);
   }
 
-  deleteTask(id: string): Observable<DeleteResult> {
-    return from(this.tasksRepository.delete(id));
+  async deleteTask(id: string): Promise<TaskEntity[]> {
+    await this.tasksRepository.delete(id);
+    return this.tasksRepository.find({
+      relations: ['user', 'project'],
+      order: { name: 'ASC' },
+    });
   }
 
   deleteAllTasks(project: Tasks): Observable<DeleteResult> {

@@ -75,15 +75,11 @@ export class UserService {
     return await this.taskService.updateTask(task.id, task);
   }
 
-  async removeUserFromTask(
-    id: string,
-    removeUserFromTaskDetails: RemoveUserFromTaskParams,
-  ) {
+  async removeUserFromTask(id: string): Promise<TaskEntity[]> {
     const task = await this.taskService.findTaskById(id);
     this.taskService.cannotFindTask(task);
-    const user = await this.findUserById(removeUserFromTaskDetails.id);
-    this.cannotFindUser(user);
     task.user = null;
-    return await this.taskService.updateTask(task.id, task);
+    await this.taskService.updateTask(task.id, task);
+    return await this.taskService.getAllTasks();
   }
 }

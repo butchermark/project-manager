@@ -75,10 +75,7 @@ export class UserController {
 
   @UseGuards(AdminAuthGuard)
   @Delete(':id/task')
-  async removeUserFromTask(
-    @Param('id') id: string,
-    @Body() removeUserFromTaskDto: RemoveUserFromTaskDto,
-  ): Promise<any> {
-    return await this.userService.removeUserFromTask(id, removeUserFromTaskDto);
+  async removeUserFromTask(@Param('id') id: string) {
+    return await this.userService.removeUserFromTask(id);
   }
 }
