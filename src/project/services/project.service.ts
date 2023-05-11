@@ -14,6 +14,7 @@ import { TaskService } from 'src/task/services/task.service';
 import { UserService } from 'src/user/services/user.service';
 import { UserEntity } from 'src/user/models/user.enity';
 import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
+import { TaskEntity } from 'src/task/models/task.entity';
 
 @UseGuards(AdminAuthGuard)
 @Injectable()
@@ -67,14 +68,15 @@ export class ProjectService {
   async createProjectTask(
     id: string,
     createProjectTaskDetails: CreateProjectTaskParams,
-  ) {
+  ): Promise<TaskEntity[]> {
     const project: ProjectEntity = await this.findProjectById(id);
     await this.taskService.createTask({
       ...createProjectTaskDetails,
       project,
     });
 
-    return await this.projectsRepository.save(project);
+    await this.projectsRepository.save(project);
+    return this.taskService.getAllTasks();
   }
 
   async archiveProject(id: string): Promise<any> {

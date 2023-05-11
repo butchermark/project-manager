@@ -16,8 +16,12 @@ export class TaskService {
     private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
-  createTask(task: Tasks): Promise<TaskEntity> {
-    return this.tasksRepository.save(task);
+  async createTask(task: Tasks): Promise<TaskEntity[]> {
+    await this.tasksRepository.save(task);
+    return this.tasksRepository.find({
+      relations: ['user', 'project'],
+      order: { name: 'ASC' },
+    });
   }
 
   async deleteTask(id: string): Promise<TaskEntity[]> {

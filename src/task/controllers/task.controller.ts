@@ -9,8 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TaskService } from '../services/task.service';
-import { Observable } from 'rxjs';
-import { UpdateResult } from 'typeorm';
 import { Tasks } from '../models/task.interface';
 import { TaskEntity } from '../models/task.entity';
 import { UpdateTaskForUserDto } from '../dtos/updateTaskForUser.dto';
@@ -22,7 +20,7 @@ export class TaskController {
 
   @UseGuards(AdminAuthGuard)
   @Post()
-  create(@Body() task: Tasks): Promise<TaskEntity> {
+  create(@Body() task: Tasks): Promise<TaskEntity[]> {
     return this.taskService.createTask(task);
   }
 

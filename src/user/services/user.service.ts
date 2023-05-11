@@ -32,7 +32,7 @@ export class UserService {
 
   async deleteUser(id: string): Promise<UserEntity[]> {
     await this.usersRepository.delete(id);
-    return await this.usersRepository.find();
+    return await this.usersRepository.find({ order: { name: 'ASC' } });
   }
 
   async deleteAllUsers(): Promise<void> {
@@ -75,11 +75,10 @@ export class UserService {
     return await this.taskService.updateTask(task.id, task);
   }
 
-  async removeUserFromTask(id: string): Promise<TaskEntity[]> {
+  async removeUserFromTask(id: string) {
     const task = await this.taskService.findTaskById(id);
     this.taskService.cannotFindTask(task);
     task.user = null;
-    await this.taskService.updateTask(task.id, task);
-    return await this.taskService.getAllTasks();
+    return await this.taskService.updateTask(task.id, task);
   }
 }

@@ -32,7 +32,7 @@ export class AuthController {
   }
 
   @UseGuards(AdminAuthGuard)
-  @Post('asd')
+  @Post('users')
   async getUsers(): Promise<Users[]> {
     return this.authService.getUsers();
   }

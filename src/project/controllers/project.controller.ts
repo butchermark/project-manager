@@ -16,6 +16,7 @@ import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
 import { CreateProjectTaskDto } from '../dtos/createProjectTask.dto';
 import { ProjectEntity } from '../models/project.entity';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { TaskEntity } from 'src/task/models/task.entity';
 
 @UseGuards(AdminAuthGuard)
 @Controller('project')
@@ -62,7 +63,7 @@ export class ProjectController {
   async createProjectTask(
     @Param('id') id: string,
     @Body() createProjectTaskDto: CreateProjectTaskDto,
-  ): Promise<any> {
+  ): Promise<TaskEntity[]> {
     console.log(createProjectTaskDto);
     return await this.projectService.createProjectTask(
       id,
