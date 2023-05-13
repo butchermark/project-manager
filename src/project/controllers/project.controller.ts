@@ -33,7 +33,7 @@ export class ProjectController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  delete(@Param('id') id: string) {
+  async delete(@Param('id') id: string) {
     return this.projectService.deleteProject(id);
   }
 
@@ -43,12 +43,19 @@ export class ProjectController {
     return this.projectService.deleteAllProjects(project);
   }
 
+  @UseGuards(AdminAuthGuard)
+  @Get(':id')
+  @ApiBearerAuth()
+  findProjectById(@Param('id') id: string): Promise<ProjectEntity> {
+    return this.projectService.findProjectById(id);
+  }
+
   @Put(':id')
   @ApiBearerAuth()
-  update(
+  async update(
     @Param('id') id: string,
     @Body() project: Projects,
-  ): Observable<UpdateResult> {
+  ): Promise<ProjectEntity> {
     return this.projectService.updateProject(id, project);
   }
 
@@ -63,8 +70,7 @@ export class ProjectController {
   async createProjectTask(
     @Param('id') id: string,
     @Body() createProjectTaskDto: CreateProjectTaskDto,
-  ): Promise<TaskEntity[]> {
-    console.log(createProjectTaskDto);
+  ): Promise<TaskEntity> {
     return await this.projectService.createProjectTask(
       id,
       createProjectTaskDto,

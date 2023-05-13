@@ -26,7 +26,9 @@ export class TaskEntity {
   @Column('boolean', { default: false, name: 'isArchived' })
   archived: boolean;
 
-  @ManyToOne(() => ProjectEntity, (project) => project.tasks)
+  @ManyToOne(() => ProjectEntity, (project) => project.tasks, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable()
   project: ProjectEntity;
 

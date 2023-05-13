@@ -28,11 +28,11 @@ export class ProjectEntity {
   @Column('boolean', { default: false, name: 'isArchived' })
   archived: boolean;
 
-  @ManyToOne(() => UserEntity, (user) => user.project)
+  @ManyToOne(() => UserEntity, (user) => user.project, { onDelete: 'CASCADE' })
   @JoinTable()
   user: UserEntity;
 
-  @OneToMany(() => TaskEntity, (task) => task.project)
+  @OneToMany(() => TaskEntity, (task) => task.project, { cascade: true })
   tasks: TaskEntity[];
 
   @ManyToMany(() => UserEntity, (users) => users.projects)

@@ -38,27 +38,36 @@ export class ProjectService {
     return await this.projectsRepository.save(project);
   }
 
-  deleteProject(id: string): Observable<DeleteResult> {
-    return from(this.projectsRepository.delete(id));
+  async deleteProject(id: string) {
+    return this.projectsRepository.delete(id);
   }
 
   deleteAllProjects(project: Projects): Observable<DeleteResult> {
     return from(this.projectsRepository.delete(project));
   }
 
-  updateProject(id: string, project: Projects): Observable<UpdateResult> {
-    return from(this.projectsRepository.update(id, project));
+  async updateProject(id: string, project: Projects): Promise<ProjectEntity> {
+    this.projectsRepository.update(id, project);
+    return await this.findProjectById(id);
   }
 
   findAllProjects(): Observable<Projects[]> {
-    return from(this.projectsRepository.find({ relations: ['user', 'tasks'] }));
+    return from(
+      this.projectsRepository.find({
+        order: { name: 'ASC' },
+        relations: ['user', 'tasks'],
+      }),
+    );
   }
 
   async findProjectById(id: string): Promise<ProjectEntity> {
-    const project = await this.projectsRepository.findOneBy({ id });
+    const project = await this.projectsRepository.findOne({
+      where: { id },
+      relations: ['user', 'tasks'],
+    });
     if (!project) {
       throw new HttpException(
-        new Error('Project not found. Cannot create task'),
+        new Error('Project not found.'),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -68,15 +77,14 @@ export class ProjectService {
   async createProjectTask(
     id: string,
     createProjectTaskDetails: CreateProjectTaskParams,
-  ): Promise<TaskEntity[]> {
+  ): Promise<TaskEntity> {
     const project: ProjectEntity = await this.findProjectById(id);
     await this.taskService.createTask({
       ...createProjectTaskDetails,
       project,
     });
 
-    await this.projectsRepository.save(project);
-    return this.taskService.getAllTasks();
+    return this.taskService.findTaskById(createProjectTaskDetails.id);
   }
 
   async archiveProject(id: string): Promise<any> {

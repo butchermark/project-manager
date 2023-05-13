@@ -24,12 +24,8 @@ export class TaskService {
     });
   }
 
-  async deleteTask(id: string): Promise<TaskEntity[]> {
-    await this.tasksRepository.delete(id);
-    return this.tasksRepository.find({
-      relations: ['user', 'project'],
-      order: { name: 'ASC' },
-    });
+  async deleteTask(id: string) {
+    return await this.tasksRepository.delete(id);
   }
 
   deleteAllTasks(project: Tasks): Observable<DeleteResult> {
@@ -53,21 +49,17 @@ export class TaskService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    await this.tasksRepository.update(id, updateTaskProperties);
+    await this.tasksRepository.save({ id: task.id, ...updateTaskProperties });
     return this.tasksRepository.find();
   }
 
-  updateTask(id: string, task: Tasks): Observable<TaskEntity> {
-    return from(this.tasksRepository.save(task));
+  async updateTask(id: string, task: Tasks): Promise<TaskEntity> {
+    return await this.tasksRepository.save(task);
   }
 
-  async updateTaskForAdmin(id: string, updates: Tasks): Promise<TaskEntity[]> {
+  async updateTaskForAdmin(id: string, updates: Tasks): Promise<TaskEntity> {
     const task = await this.findTaskById(id);
-    await this.tasksRepository.update(task, updates);
-    return this.tasksRepository.find({
-      relations: ['user', 'project'],
-      order: { name: 'ASC' },
-    });
+    return await this.tasksRepository.save({ id: task.id, ...updates });
   }
 
   async findAllTasksForUser(): Promise<TaskEntity[]> {
@@ -78,6 +70,7 @@ export class TaskService {
     return await this.tasksRepository.find({
       where: { user: { id: userId } },
       relations: ['user'],
+      order: { name: 'ASC' },
     });
   }
 
@@ -113,6 +106,12 @@ export class TaskService {
   async archiveTask(id: string): Promise<any> {
     const task = await this.findTaskById(id);
     task.archived = true;
+    return await this.updateTask(task.id, task);
+  }
+
+  async unarchiveTask(id: string): Promise<any> {
+    const task = await this.findTaskById(id);
+    task.archived = false;
     return await this.updateTask(task.id, task);
   }
 }

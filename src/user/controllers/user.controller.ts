@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Headers,
   Param,
   Post,
   Put,
@@ -12,9 +11,7 @@ import {
 import { UserService } from '../services/user.service';
 import { Users } from '../models/user.interface';
 import { Observable } from 'rxjs';
-import { DeleteResult, UpdateResult } from 'typeorm';
 import { AddUserToTaskDto } from '../dtos/addUserToTask.dto';
-import { RemoveUserFromTaskDto } from '../dtos/removeUserFromTask.dto';
 import { AdminAuthGuard, JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { TaskEntity } from 'src/task/models/task.entity';
@@ -48,7 +45,7 @@ export class UserController {
   async update(
     @Param('id') id: string,
     @Body() user: Users,
-  ): Promise<UserEntity[]> {
+  ): Promise<UserEntity> {
     return await this.userService.updateUser(id, user);
   }
 
@@ -65,11 +62,17 @@ export class UserController {
   }
 
   @UseGuards(AdminAuthGuard)
+  @Get('/admins')
+  async getAllAdmins(): Promise<UserEntity[]> {
+    return await this.userService.getAllAdmins();
+  }
+
+  @UseGuards(AdminAuthGuard)
   @Post(':id/task')
   async addUserToTask(
     @Param('id') id: string,
     @Body() addUserToTaskDto: AddUserToTaskDto,
-  ): Promise<any> {
+  ): Promise<TaskEntity> {
     return await this.userService.addUserToTask(id, addUserToTaskDto);
   }
 

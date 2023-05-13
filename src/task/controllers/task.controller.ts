@@ -26,7 +26,7 @@ export class TaskController {
 
   @UseGuards(AdminAuthGuard)
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<TaskEntity[]> {
+  async delete(@Param('id') id: string) {
     return this.taskService.deleteTask(id);
   }
 
@@ -35,7 +35,7 @@ export class TaskController {
   async updateTask(
     @Param('id') id: string,
     @Body() updates: Tasks,
-  ): Promise<TaskEntity[]> {
+  ): Promise<TaskEntity> {
     return await this.taskService.updateTaskForAdmin(id, updates);
   }
 
@@ -70,5 +70,11 @@ export class TaskController {
   @Put(':id/archiveTask')
   async archiveTask(@Param('id') id: string): Promise<any> {
     return await this.taskService.archiveTask(id);
+  }
+
+  @UseGuards(AdminAuthGuard)
+  @Put(':id/unarchiveTask')
+  async unarchiveTask(@Param('id') id: string): Promise<any> {
+    return await this.taskService.unarchiveTask(id);
   }
 }

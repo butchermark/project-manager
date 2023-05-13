@@ -1,11 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserEntity } from '../models/user.enity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Observable, from } from 'rxjs';
 import { Users } from '../models/user.interface';
 import { AddUserToTaskParams } from '../models/addUserToTask.interface';
-import { RemoveUserFromTaskParams } from '../models/removeUserFromTaskParams.interface';
 import { TaskEntity } from 'src/task/models/task.entity';
 import { TaskService } from 'src/task/services/task.service';
 
@@ -39,9 +38,9 @@ export class UserService {
     await this.usersRepository.clear();
   }
 
-  async updateUser(id: string, user: Users): Promise<UserEntity[]> {
-    await this.usersRepository.update(id, user);
-    return this.usersRepository.find({ order: { name: 'ASC' } });
+  async updateUser(id: string, user: Users): Promise<UserEntity> {
+    this.usersRepository.update(id, user);
+    return await this.findUserById(id);
   }
 
   findAllUsers(): Observable<Users[]> {
@@ -56,6 +55,10 @@ export class UserService {
     }
   }
 
+  async getAllAdmins(): Promise<UserEntity[]> {
+    return await this.usersRepository.find({ where: { isAdmin: true } });
+  }
+
   async getAllUserTasks(id: string): Promise<TaskEntity[]> {
     return await this.taskService.findTaskByUserId(id);
   }
@@ -66,7 +69,10 @@ export class UserService {
     return user;
   }
 
-  async addUserToTask(id: string, addUserToTaskDetails: AddUserToTaskParams) {
+  async addUserToTask(
+    id: string,
+    addUserToTaskDetails: AddUserToTaskParams,
+  ): Promise<TaskEntity> {
     const task = await this.taskService.findTaskById(id);
     this.taskService.cannotFindTask(task);
     const user = await this.findUserById(addUserToTaskDetails.id);

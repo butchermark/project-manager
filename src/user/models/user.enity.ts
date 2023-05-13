@@ -31,7 +31,7 @@ export class UserEntity {
   @Column('date', { default: '2000-01-01', name: 'lastLogin' })
   lastLogin: Date;
 
-  @OneToMany(() => ProjectEntity, (project) => project.user)
+  @OneToMany(() => ProjectEntity, (project) => project.user, { cascade: true })
   project: ProjectEntity;
 
   @OneToMany(() => TaskEntity, (task) => task.user, { cascade: true })
