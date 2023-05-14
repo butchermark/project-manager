@@ -18,15 +18,14 @@ export class UserService {
     private readonly taskService: TaskService,
   ) {}
 
-  async createUser(user: Users): Promise<UserEntity[]> {
+  async createUser(user: Users): Promise<UserEntity> {
     const hashedPassword = await crypto
       .createHmac('sha256', process.env.USER_SALT)
       .update(user.password)
       .digest('base64');
 
     user.password = hashedPassword;
-    await this.usersRepository.save(user);
-    return await this.usersRepository.find();
+    return await this.usersRepository.save(user);
   }
 
   async deleteUser(id: string): Promise<UserEntity[]> {
@@ -67,6 +66,10 @@ export class UserService {
     const user = await this.usersRepository.findOneBy({ id });
     this.cannotFindUser(user);
     return user;
+  }
+
+  async userRegistration(user: Users): Promise<UserEntity> {
+    return await this.createUser(user);
   }
 
   async addUserToTask(

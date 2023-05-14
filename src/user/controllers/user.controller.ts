@@ -24,8 +24,13 @@ export class UserController {
   @UseGuards(AdminAuthGuard)
   @Post()
   @ApiBearerAuth()
-  async create(@Body() user: Users): Promise<UserEntity[]> {
+  async create(@Body() user: Users): Promise<UserEntity> {
     return await this.userService.createUser(user);
+  }
+
+  @Post('/registration')
+  async registration(@Body() user: Users): Promise<UserEntity> {
+    return await this.userService.userRegistration(user);
   }
 
   @UseGuards(AdminAuthGuard)

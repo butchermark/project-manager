@@ -63,7 +63,21 @@ export class ProjectService {
   async findProjectById(id: string): Promise<ProjectEntity> {
     const project = await this.projectsRepository.findOne({
       where: { id },
-      relations: ['user', 'tasks'],
+      relations: ['user'],
+    });
+    if (!project) {
+      throw new HttpException(
+        new Error('Project not found.'),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return project;
+  }
+
+  async findProjectByIdForSite(id: string): Promise<ProjectEntity> {
+    const project = await this.projectsRepository.findOne({
+      where: { id },
+      relations: ['user', 'users', 'tasks'],
     });
     if (!project) {
       throw new HttpException(
@@ -90,6 +104,12 @@ export class ProjectService {
   async archiveProject(id: string): Promise<any> {
     const project = await this.findProjectById(id);
     project.archived = true;
+    return await this.updateProject(project.id, project);
+  }
+
+  async unarchiveProject(id: string): Promise<any> {
+    const project = await this.findProjectById(id);
+    project.archived = false;
     return await this.updateProject(project.id, project);
   }
 }

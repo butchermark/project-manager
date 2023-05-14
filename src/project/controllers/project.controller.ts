@@ -43,11 +43,10 @@ export class ProjectController {
     return this.projectService.deleteAllProjects(project);
   }
 
-  @UseGuards(AdminAuthGuard)
   @Get(':id')
   @ApiBearerAuth()
   findProjectById(@Param('id') id: string): Promise<ProjectEntity> {
-    return this.projectService.findProjectById(id);
+    return this.projectService.findProjectByIdForSite(id);
   }
 
   @Put(':id')
@@ -80,5 +79,10 @@ export class ProjectController {
   @Put(':id/archiveProject')
   async archiveProject(@Param('id') id: string): Promise<ProjectEntity> {
     return await this.projectService.archiveProject(id);
+  }
+
+  @Put(':id/unarchiveProject')
+  async unarchiveProject(@Param('id') id: string): Promise<ProjectEntity> {
+    return await this.projectService.unarchiveProject(id);
   }
 }
