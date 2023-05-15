@@ -18,7 +18,7 @@ export class AuthService {
   async signinLocal(dto: AuthDto): Promise<any> {
     const user = await this.userRepository.findOne({
       where: {
-        name: dto.name,
+        email: dto.email,
       },
     });
     if (!user) {
@@ -31,7 +31,7 @@ export class AuthService {
       .digest('base64');
     dto.password = hashedPassword;
 
-    if (dto.password !== user.password || user.name !== dto.name)
+    if (dto.password !== user.password || user.email !== dto.email)
       throw new UnauthorizedException('Password or username does not match');
 
     const updatedUser = await this.userRepository.save({

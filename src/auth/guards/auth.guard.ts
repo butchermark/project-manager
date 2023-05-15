@@ -6,7 +6,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {}
 
 @Injectable()
 export class AdminAuthGuard extends AuthGuard('admin-jwt') {}
-//EZ EGY SZAR
 
 @Injectable()
 export class UserAuthGuard extends AuthGuard('user') {}
