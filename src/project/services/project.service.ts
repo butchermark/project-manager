@@ -10,11 +10,11 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Projects } from '../models/project.interface';
 import { Observable, from } from 'rxjs';
 import { CreateProjectTaskParams } from '../models/createProjectTaskParams.interface';
-import { TaskService } from 'src/task/services/task.service';
-import { UserService } from 'src/user/services/user.service';
-import { UserEntity } from 'src/user/models/user.enity';
-import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
-import { TaskEntity } from 'src/task/models/task.entity';
+import { AdminAuthGuard } from '../../auth/guards/auth.guard';
+import { TaskEntity } from '../../task/models/task.entity';
+import { TaskService } from '../../task/services/task.service';
+import { UserEntity } from '../../user/models/user.enity';
+import { UserService } from '../../user/services/user.service';
 
 @UseGuards(AdminAuthGuard)
 @Injectable()

@@ -12,10 +12,10 @@ import { UserService } from '../services/user.service';
 import { Users } from '../models/user.interface';
 import { Observable } from 'rxjs';
 import { AddUserToTaskDto } from '../dtos/addUserToTask.dto';
-import { AdminAuthGuard, JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { TaskEntity } from 'src/task/models/task.entity';
 import { UserEntity } from '../models/user.enity';
+import { AdminAuthGuard, JwtAuthGuard } from '../../auth/guards/auth.guard';
+import { TaskEntity } from '../../task/models/task.entity';
 
 @Controller('user')
 export class UserController {

@@ -10,8 +10,8 @@ import {
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
-import { Users } from 'src/user/models/user.interface';
 import { AdminAuthGuard, JwtAuthGuard } from './guards/auth.guard';
+import { Users } from '../user/models/user.interface';
 
 @Controller('auth')
 export class AuthController {

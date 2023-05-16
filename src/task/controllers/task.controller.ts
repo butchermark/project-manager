@@ -12,7 +12,7 @@ import { TaskService } from '../services/task.service';
 import { Tasks } from '../models/task.interface';
 import { TaskEntity } from '../models/task.entity';
 import { UpdateTaskForUserDto } from '../dtos/updateTaskForUser.dto';
-import { AdminAuthGuard, JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { AdminAuthGuard, JwtAuthGuard } from '../../auth/guards/auth.guard';
 
 @Controller('task')
 export class TaskController {

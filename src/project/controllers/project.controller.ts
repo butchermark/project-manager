@@ -10,18 +10,18 @@ import {
 } from '@nestjs/common';
 import { ProjectService } from '../services/project.service';
 import { Observable } from 'rxjs';
-import { UpdateResult } from 'typeorm';
 import { Projects } from '../models/project.interface';
-import { AdminAuthGuard } from 'src/auth/guards/auth.guard';
 import { CreateProjectTaskDto } from '../dtos/createProjectTask.dto';
 import { ProjectEntity } from '../models/project.entity';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { TaskEntity } from 'src/task/models/task.entity';
+import { AdminAuthGuard } from '../../auth/guards/auth.guard';
+import { TaskEntity } from '../../task/models/task.entity';
 
 @UseGuards(AdminAuthGuard)
 @Controller('project')
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
+
   @Post(':id')
   @ApiBearerAuth()
   create(

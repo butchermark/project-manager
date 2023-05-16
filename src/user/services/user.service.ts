@@ -5,10 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Observable, from } from 'rxjs';
 import { Users } from '../models/user.interface';
 import { AddUserToTaskParams } from '../models/addUserToTask.interface';
-import { TaskEntity } from 'src/task/models/task.entity';
-import { TaskService } from 'src/task/services/task.service';
-
 import * as crypto from 'crypto';
+import { TaskEntity } from '../../task/models/task.entity';
+import { TaskService } from '../../task/services/task.service';
 
 @Injectable()
 export class UserService {
